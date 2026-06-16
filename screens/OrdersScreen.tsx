@@ -1,13 +1,23 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { View, Text, FlatList, TextInput, Pressable, StyleSheet, ListRenderItem } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { OrderItem } from '../types';
-import { mockOrders } from '../utils/mockOrders';
+import { useOrdersStore } from '../store/useOrdersStore';
 import OrderCard from '../components/OrderCard';
 
 const OrdersScreen = (): React.JSX.Element => {
   const insets = useSafeAreaInsets();
+  const orders = useOrdersStore((state) => state.orders);
+  const searchQuery = useOrdersStore((state) => state.searchQuery);
+  const setSearchQuery = useOrdersStore((state) => state.setSearchQuery);
+  const refresh = useOrdersStore((state) => state.refresh);
+  const addOrder = useOrdersStore((state) => state.addOrder);
+
+  const filteredOrders = useMemo(
+    () => orders.filter((order) => String(order.number).includes(searchQuery.trim())),
+    [orders, searchQuery]
+  );
 
   const renderItem: ListRenderItem<OrderItem> = useCallback(
     ({ item }) => <OrderCard order={item} />,
@@ -26,6 +36,8 @@ const OrdersScreen = (): React.JSX.Element => {
             style={styles.searchInput}
             placeholder="Поиск по номеру заказа..."
             placeholderTextColor="#E8F0FE"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
           />
         </View>
       </View>
@@ -33,18 +45,18 @@ const OrdersScreen = (): React.JSX.Element => {
       <FlatList
         style={styles.list}
         contentContainerStyle={styles.listContent}
-        data={mockOrders}
+        data={filteredOrders}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListHeaderComponent={<Text style={styles.sectionTitle}>Мои заказы</Text>}
       />
 
       <View style={styles.footer}>
-        <Pressable style={styles.refreshButton}>
+        <Pressable style={styles.refreshButton} onPress={refresh}>
           <Ionicons name="refresh" size={18} color="#4A90E2" />
           <Text style={styles.refreshButtonText}>Обновить</Text>
         </Pressable>
-        <Pressable style={styles.newOrderButton}>
+        <Pressable style={styles.newOrderButton} onPress={addOrder}>
           <Ionicons name="add" size={18} color="#fff" />
           <Text style={styles.newOrderButtonText}>Новый заказ</Text>
         </Pressable>
