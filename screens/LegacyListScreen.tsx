@@ -52,6 +52,10 @@ const LegacyListScreen = (): React.JSX.Element => {
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
+        initialNumToRender={6}
+        maxToRenderPerBatch={6}
+        windowSize={2}
+        removeClippedSubviews
       />
     </View>
   );

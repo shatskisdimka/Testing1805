@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
+import Animated, { SlideInLeft } from 'react-native-reanimated';
 import { NewsItem } from '../types';
 
 interface NewsListItemProps {
@@ -9,10 +10,10 @@ interface NewsListItemProps {
 const NewsListItem = ({ item }: NewsListItemProps): React.JSX.Element => {
   // console.log('render NewsListItem', item.id);
   return (
-    <View style={styles.card}>
+    <Animated.View entering={SlideInLeft.duration(400)} style={styles.card}>
       <Text style={styles.cardTitle}>{item.title}</Text>
       <Text style={styles.cardBody}>{item.body}</Text>
-    </View>
+    </Animated.View>
   );
 };
 
