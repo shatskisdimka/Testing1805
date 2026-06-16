@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Pressable, ListRenderItem } from 'react-native';
+import { Text, FlatList, StyleSheet, ActivityIndicator, Pressable, ListRenderItem } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ApiError, fetchNews } from '../utils/api';
 import { NewsItem } from '../types';
 import NewsListItem from '../components/NewsListItem';
@@ -31,21 +32,27 @@ const LegacyListScreen = (): React.JSX.Element => {
 
   const keyExtractor = useCallback((item: NewsItem) => String(item.id), []);
 
-  if (loading) return <ActivityIndicator size="large" style={styles.center} />;
+  if (loading) {
+    return (
+      <SafeAreaView style={[styles.container, styles.center]} edges={['top']}>
+        <ActivityIndicator size="large" />
+      </SafeAreaView>
+    );
+  }
 
   if (error) {
     return (
-      <View style={[styles.container, styles.center]}>
+      <SafeAreaView style={[styles.container, styles.center]} edges={['top']}>
         <Text style={styles.errorText}>{error}</Text>
         <Pressable style={styles.retryButton} onPress={loadNews}>
           <Text style={styles.retryButtonText}>Повторить</Text>
         </Pressable>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Text style={styles.title}>Новости</Text>
       <FlatList
         style={styles.list}
@@ -57,7 +64,7 @@ const LegacyListScreen = (): React.JSX.Element => {
         windowSize={2}
         removeClippedSubviews
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
