@@ -1,2 +1,2 @@
-export type NewsItem = any;
-export type ApiResponse = any;
+export * from './news';
+export * from './order';
