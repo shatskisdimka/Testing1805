@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Pressable, ListRenderItem } from 'react-native';
 import { ApiError, fetchNews } from '../utils/api';
 import { NewsItem } from '../types';
+import NewsListItem from '../components/NewsListItem';
 
 const LegacyListScreen = (): React.JSX.Element => {
   const [data, setData] = useState<NewsItem[]>([]);
@@ -23,6 +24,13 @@ const LegacyListScreen = (): React.JSX.Element => {
     loadNews();
   }, [loadNews]);
 
+  const renderItem: ListRenderItem<NewsItem> = useCallback(
+    ({ item }) => <NewsListItem item={item} />,
+    []
+  );
+
+  const keyExtractor = useCallback((item: NewsItem) => String(item.id), []);
+
   if (loading) return <ActivityIndicator size="large" style={styles.center} />;
 
   if (error) {
@@ -39,14 +47,12 @@ const LegacyListScreen = (): React.JSX.Element => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Новости</Text>
-      <ScrollView style={styles.list}>
-        {data.map((item: NewsItem) => (
-          <View key={item.id} style={styles.card}>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardBody}>{item.body}</Text>
-          </View>
-        ))}
-      </ScrollView>
+      <FlatList
+        style={styles.list}
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+      />
     </View>
   );
 };
@@ -56,9 +62,6 @@ const styles = StyleSheet.create({
   center: { justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
   list: { flex: 1 },
-  card: { backgroundColor: '#fff', padding: 16, marginBottom: 12, borderRadius: 8 },
-  cardTitle: { fontSize: 18, fontWeight: '600', marginBottom: 8 },
-  cardBody: { fontSize: 14, color: '#555' },
   errorText: { fontSize: 16, color: '#c0392b', textAlign: 'center', marginBottom: 16 },
   retryButton: { backgroundColor: '#2d5cf6', paddingHorizontal: 24, paddingVertical: 10, borderRadius: 8 },
   retryButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
