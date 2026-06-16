@@ -69,7 +69,7 @@ const LegacyListScreen = (): React.JSX.Element => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f5f5f5' },
+  container: { flex: 1, paddingHorizontal: 16, paddingTop: 16, backgroundColor: '#f5f5f5' },
   center: { justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
   list: { flex: 1 },
